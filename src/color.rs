@@ -11,53 +11,60 @@ impl Color {
     }
 
     pub fn to_ppm_string(&self) -> String {
-        format!("{} {} {}", util::scale(self.0, 255), util::scale(self.1, 255), util::scale(self.2, 255))
+        let &Color (r, g, b) = self;
+        format!("{} {} {}", util::scale(r, 255), util::scale(g, 255), util::scale(b, 255))
     }
 }
 
 impl PartialEq<Color> for Color {
-  fn eq(&self, other: &Color) -> bool {
-      util::approx_eq(self.0, other.0)
-      && util::approx_eq(self.1, other.1)
-      && util::approx_eq(self.2, other.2)
+  fn eq(&self, &Color (rr, rg, rb): &Color) -> bool {
+      let &Color (r, g, b) = self;
+      util::approx_eq(r, rr)
+      && util::approx_eq(g, rg)
+      && util::approx_eq(b, rb)
   }
 }
 
 impl ops::Add<Color> for Color {
     type Output = Color;
 
-    fn add(self, _rhs: Color) -> Color {
-        Color(self.0 + _rhs.0, self.1 + _rhs.1, self.2 + _rhs.2)
+    fn add(self, Color (rr, rg, rb): Color) -> Color {
+        let Color (r, g, b) = self;
+        Color(r + rr, g + rg, b + rb)
     }
 }
 
 impl ops::Sub<Color> for Color {
     type Output = Color;
 
-    fn sub(self, _rhs: Color) -> Color {
-        Color(self.0 - _rhs.0, self.1 - _rhs.1, self.2 - _rhs.2)
+    fn sub(self, Color (rr, rg, rb): Color) -> Color {
+        let Color (r, g, b) = self;
+        Color(r - rr, g - rg, b - rb)
     }
 }
 
 impl ops::Mul<Color> for Color {
     type Output = Color;
 
-    fn mul(self, _rhs: Color) -> Color {
-        Color(self.0 * _rhs.0, self.1 * _rhs.1, self.2 * _rhs.2)
+    fn mul(self, Color (rr, rg, rb): Color) -> Color {
+        let Color (r, g, b) = self;
+        Color(r * rr, g * rg, b * rb)
     }
 }
 
 impl ops::Mul<f64> for Color {
     type Output = Color;
 
-    fn mul(self, _rhs: f64) -> Color {
-        Color(self.0 * _rhs, self.1 * _rhs, self.2 * _rhs)
+    fn mul(self, rf: f64) -> Color {
+        let Color (r, g, b) = self;
+        Color(r * rf, g * rf, b * rf)
     }
 }
 
 impl Clone for Color {
     fn clone(&self) -> Color {
-        Color(self.0, self.1, self.2)
+        let &Color (r, g, b) = self;
+        Color(r, g, b)
     }
 }
 
