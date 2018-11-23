@@ -9,5 +9,6 @@ mod tests {
     #[test]
     fn test_approx_equal() {
         assert_eq!(approx_eq(0.9 - 0.7, 0.2), true);
+        assert_eq!(approx_eq(0.9, 0.7), false);
     }
 }
