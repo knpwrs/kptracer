@@ -18,70 +18,80 @@ impl Tuple {
     }
 
     pub fn is_vector(&self) -> bool {
-        self.3 == 0.0
+        let &Tuple(_, _, _, w) = self;
+        util::approx_eq(w, 0.0)
     }
 
     pub fn magnitude(&self) -> f64 {
-        (self.0.powi(2) + self.1.powi(2) + self.2.powi(2) + self.3.powi(2)).sqrt()
+        let Tuple (x, y, z, w) = self;
+        (x.powi(2) + y.powi(2) + z.powi(2) + w.powi(2)).sqrt()
     }
 
     pub fn normalize(&self) -> Tuple {
         let mag = self.magnitude();
-        Tuple(self.0 / mag, self.1 / mag, self.2 / mag, self.3 / mag)
+        let Tuple (x, y, z, w) = self;
+        Tuple(x / mag, y / mag, z / mag, w / mag)
     }
 
-    pub fn dot(&self, _rhs: &Tuple) -> f64 {
-        (self.0 * _rhs.0) + (self.1 * _rhs.1) + (self.2 * _rhs.2) + (self.3 * _rhs.3)
+    pub fn dot(&self, Tuple (rx, ry, rz, rw): &Tuple) -> f64 {
+        let Tuple (x, y, z, w) = self;
+        (x * rx) + (y * ry) + (z * rz) + (w * rw)
     }
 
     // Assumes _rhs is a vector
-    pub fn cross(&self, _rhs: &Tuple) -> Tuple {
+    pub fn cross(&self, Tuple (rx, ry, rz, _rw): &Tuple) -> Tuple {
+        let Tuple (x, y, z, _w) = self;
         Tuple::vector(
-          (self.1 * _rhs.2) - (self.2 * _rhs.1),
-          (self.2 * _rhs.0) - (self.0 * _rhs.2),
-          (self.0 * _rhs.1) - (self.1 * _rhs.0),
+          (y * rz) - (z * ry),
+          (z * rx) - (x * rz),
+          (x * ry) - (y * rx),
         )
     }
 }
 
 impl PartialEq<Tuple> for Tuple {
-  fn eq(&self, other: &Tuple) -> bool {
-      util::approx_eq(self.0, other.0)
-      && util::approx_eq(self.1, other.1)
-      && util::approx_eq(self.2, other.2)
-      && util::approx_eq(self.3, other.3)
+  fn eq(&self, &Tuple (rx, ry, rz, rw): &Tuple) -> bool {
+      let &Tuple (x, y, z, w) = self;
+      util::approx_eq(x, rx)
+      && util::approx_eq(y, ry)
+      && util::approx_eq(z, rz)
+      && util::approx_eq(w, rw)
   }
 }
 
 impl ops::Add<Tuple> for Tuple {
     type Output = Tuple;
 
-    fn add(self, _rhs: Tuple) -> Tuple {
-        Tuple(self.0 + _rhs.0, self.1 + _rhs.1, self.2 + _rhs.2, self.3 + _rhs.3)
+    fn add(self, Tuple (rx, ry, rz, rw): Tuple) -> Tuple {
+        let Tuple (x, y, z, w) = self;
+        Tuple(x + rx, y + ry, z + rz, w + rw)
     }
 }
 
 impl ops::Sub<Tuple> for Tuple {
     type Output = Tuple;
 
-    fn sub(self, _rhs: Tuple) -> Tuple {
-        Tuple(self.0 - _rhs.0, self.1 - _rhs.1, self.2 - _rhs.2, self.3 - _rhs.3)
+    fn sub(self, Tuple (rx, ry, rz, rw): Tuple) -> Tuple {
+        let Tuple (x, y, z, w) = self;
+        Tuple(x - rx, y - ry, z - rz, w - rw)
     }
 }
 
 impl ops::Mul<f64> for Tuple {
     type Output = Tuple;
 
-    fn mul(self, _rhs: f64) -> Tuple {
-        Tuple(self.0 * _rhs, self.1 * _rhs, self.2 * _rhs, self.3 * _rhs)
+    fn mul(self, r: f64) -> Tuple {
+        let Tuple (x, y, z, w) = self;
+        Tuple(x * r, y * r, z * r, w * r)
     }
 }
 
 impl ops::Div<f64> for Tuple {
     type Output = Tuple;
 
-    fn div(self, _rhs: f64) -> Tuple {
-        Tuple(self.0 / _rhs, self.1 / _rhs, self.2 / _rhs, self.3 / _rhs)
+    fn div(self, r: f64) -> Tuple {
+        let Tuple (x, y, z, w) = self;
+        Tuple(x / r, y / r, z / r, w / r)
     }
 }
 
