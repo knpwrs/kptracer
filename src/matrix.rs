@@ -58,6 +58,33 @@ impl Matrix {
         m
     }
 
+    pub fn rotation_x(rad: f64) -> Matrix {
+        let mut m = Matrix::identity(4);
+        m.write_value(1, 1, rad.cos());
+        m.write_value(1, 2, -(rad.sin()));
+        m.write_value(2, 1, rad.sin());
+        m.write_value(2, 2, rad.cos());
+        m
+    }
+
+    pub fn rotation_y(rad: f64) -> Matrix {
+        let mut m = Matrix::identity(4);
+        m.write_value(0, 0, rad.cos());
+        m.write_value(0, 2, rad.sin());
+        m.write_value(2, 0, -(rad.sin()));
+        m.write_value(2, 2, rad.cos());
+        m
+    }
+
+    pub fn rotation_z(rad: f64) -> Matrix {
+        let mut m = Matrix::identity(4);
+        m.write_value(0, 0, rad.cos());
+        m.write_value(0, 1, -(rad.sin()));
+        m.write_value(1, 0, rad.sin());
+        m.write_value(1, 1, rad.cos());
+        m
+    }
+
     pub fn write_value(&mut self, row: usize, col: usize, v: f64) {
         self.values[row * self.cols + col] = v;
     }
@@ -194,6 +221,11 @@ impl ops::Mul<tuple::Tuple> for Matrix {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::f64::consts::PI;
+
+    fn root_2() -> f64 {
+        (2.0 as f64).sqrt()
+    }
 
     #[test]
     fn create_matrix() {
@@ -436,5 +468,59 @@ mod tests {
         assert_eq!(tv, tuple::Tuple::vector(-2.0, 3.0, 4.0));
         let ov = tmi * tv;
         assert_eq!(ov, vc); 
+    }
+
+    #[test]
+    fn rotation_x() {
+        let p1 = tuple::Tuple::point(0.0, 1.0, 0.0);
+        let p2 = p1.clone();
+        let p3 = p1.clone();
+        let p4 = p1.clone();
+        let half_quarter = Matrix::rotation_x(PI / 4.0);
+        let half_quarter_i = half_quarter.inverse();
+        let full_quarter = Matrix::rotation_x(PI / 2.0);
+        let full_quarter_i = full_quarter.inverse();
+        let p1hq = half_quarter * p1;
+        assert_eq!(p1hq, tuple::Tuple::point(0.0, root_2() / 2.0, root_2() / 2.0));
+        assert_eq!(half_quarter_i * p1hq, p3);
+        let p2hq = full_quarter * p2;
+        assert_eq!(p2hq, tuple::Tuple::point(0.0, 0.0, 1.0));
+        assert_eq!(full_quarter_i * p2hq, p4);
+    }
+
+    #[test]
+    fn rotation_y() {
+        let p1 = tuple::Tuple::point(0.0, 0.0, 1.0);
+        let p2 = p1.clone();
+        let p3 = p1.clone();
+        let p4 = p1.clone();
+        let half_quarter = Matrix::rotation_y(PI / 4.0);
+        let half_quarter_i = half_quarter.inverse();
+        let full_quarter = Matrix::rotation_y(PI / 2.0);
+        let full_quarter_i = full_quarter.inverse();
+        let p1hq = half_quarter * p1;
+        assert_eq!(p1hq, tuple::Tuple::point(root_2() / 2.0, 0.0, root_2() / 2.0));
+        assert_eq!(half_quarter_i * p1hq, p3);
+        let p2hq = full_quarter * p2;
+        assert_eq!(p2hq, tuple::Tuple::point(1.0, 0.0, 0.0));
+        assert_eq!(full_quarter_i * p2hq, p4);
+    }
+
+    #[test]
+    fn rotation_z() {
+        let p1 = tuple::Tuple::point(0.0, 1.0, 0.0);
+        let p2 = p1.clone();
+        let p3 = p1.clone();
+        let p4 = p1.clone();
+        let half_quarter = Matrix::rotation_z(PI / 4.0);
+        let half_quarter_i = half_quarter.inverse();
+        let full_quarter = Matrix::rotation_z(PI / 2.0);
+        let full_quarter_i = full_quarter.inverse();
+        let p1hq = half_quarter * p1;
+        assert_eq!(p1hq, tuple::Tuple::point(-(root_2() / 2.0), root_2() / 2.0, 0.0));
+        assert_eq!(half_quarter_i * p1hq, p3);
+        let p2hq = full_quarter * p2;
+        assert_eq!(p2hq, tuple::Tuple::point(-1.0, 0.0, 0.0));
+        assert_eq!(full_quarter_i * p2hq, p4);
     }
 }
