@@ -85,6 +85,17 @@ impl Matrix {
         m
     }
 
+    pub fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Matrix {
+        let mut m = Matrix::identity(4);
+        m.write_value(0, 1, xy);
+        m.write_value(0, 2, xz);
+        m.write_value(1, 0, yx);
+        m.write_value(1, 2, yz);
+        m.write_value(2, 0, zx);
+        m.write_value(2, 1, zy);
+        m
+    }
+
     pub fn write_value(&mut self, row: usize, col: usize, v: f64) {
         self.values[row * self.cols + col] = v;
     }
@@ -522,5 +533,47 @@ mod tests {
         let p2hq = full_quarter * p2;
         assert_eq!(p2hq, tuple::Tuple::point(-1.0, 0.0, 0.0));
         assert_eq!(full_quarter_i * p2hq, p4);
+    }
+
+    #[test]
+    fn shearing_xy() {
+        let t = Matrix::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        let p = tuple::Tuple::point(2.0, 3.0, 4.0);
+        assert_eq!(t * p, tuple::Tuple::point(5.0, 3.0, 4.0));
+    }
+
+    #[test]
+    fn shearing_xz() {
+        let t = Matrix::shearing(0.0, 1.0, 0.0, 0.0, 0.0, 0.0);
+        let p = tuple::Tuple::point(2.0, 3.0, 4.0);
+        assert_eq!(t * p, tuple::Tuple::point(6.0, 3.0, 4.0));
+    }
+
+    #[test]
+    fn shearing_yx() {
+        let t = Matrix::shearing(0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
+        let p = tuple::Tuple::point(2.0, 3.0, 4.0);
+        assert_eq!(t * p, tuple::Tuple::point(2.0, 5.0, 4.0));
+    }
+
+    #[test]
+    fn shearing_yz() {
+        let t = Matrix::shearing(0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+        let p = tuple::Tuple::point(2.0, 3.0, 4.0);
+        assert_eq!(t * p, tuple::Tuple::point(2.0, 7.0, 4.0));
+    }
+
+    #[test]
+    fn shearing_zx() {
+        let t = Matrix::shearing(0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+        let p = tuple::Tuple::point(2.0, 3.0, 4.0);
+        assert_eq!(t * p, tuple::Tuple::point(2.0, 3.0, 6.0));
+    }
+
+    #[test]
+    fn shearing_zy() {
+        let t = Matrix::shearing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+        let p = tuple::Tuple::point(2.0, 3.0, 4.0);
+        assert_eq!(t * p, tuple::Tuple::point(2.0, 3.0, 7.0));
     }
 }
