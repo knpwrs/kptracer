@@ -42,6 +42,14 @@ impl Matrix {
         Matrix::new_with_values(rows, values)
     }
 
+    pub fn translation(x: f64, y: f64, z: f64) -> Matrix {
+        let mut m = Matrix::identity(4);
+        m.write_value(0, 3, x);
+        m.write_value(1, 3, y);
+        m.write_value(2, 3, z);
+        m
+    }
+
     pub fn write_value(&mut self, row: usize, col: usize, v: f64) {
         self.values[row * self.cols + col] = v;
     }
@@ -351,5 +359,26 @@ mod tests {
         let m3 = Matrix::new_with_values(4, vec![8.0, 2.0, 2.0, 2.0, 3.0, -1.0, 7.0, 0.0, 7.0, 0.0, 5.0, 4.0, 6.0, -2.0, 0.0, 5.0]);
         let m3i = m3.inverse();
         assert_eq!(m2 * m3 * m3i, m2c);
+    }
+
+    #[test]
+    fn translation_points() {
+        let p = tuple::Tuple::point(-3.0, 4.0, 5.0);
+        let pc = p.clone();
+        let tm = Matrix::translation(5.0, -3.0, 2.0);
+        let tmi = tm.inverse();
+        let tp = tm * p;
+        assert_eq!(tp, tuple::Tuple::point(2.0, 1.0, 7.0));
+        let op = tmi * tp;
+        assert_eq!(op, pc);
+    }
+
+    #[test]
+    fn translation_vectors() {
+        let v = tuple::Tuple::vector(-3.0, 4.0, 5.0);
+        let vc = v.clone();
+        let tm = Matrix::translation(5.0, -3.0, 2.0);
+        let tv = tm * v;
+        assert_eq!(tv, vc);
     }
 }
