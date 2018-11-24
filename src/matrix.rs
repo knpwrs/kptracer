@@ -576,4 +576,14 @@ mod tests {
         let p = tuple::Tuple::point(2.0, 3.0, 4.0);
         assert_eq!(t * p, tuple::Tuple::point(2.0, 3.0, 7.0));
     }
+
+    #[test]
+    fn chaining_transformations() {
+        let p = tuple::Tuple::point(1.0, 0.0, 1.0);
+        let ro = Matrix::rotation_x(PI / 2.0);
+        let sc = Matrix::scaling(5.0, 5.0, 5.0);
+        let tr = Matrix::translation(10.0, 5.0, 7.0);
+        let t = tr * sc * ro; // transfomations must be applied in reverse order
+        assert_eq!(t * p, tuple::Tuple::point(15.0, 0.0, 7.0));
+    }
 }
