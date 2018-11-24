@@ -50,6 +50,14 @@ impl Matrix {
         m
     }
 
+    pub fn scaling(x: f64, y: f64, z: f64) -> Matrix {
+        let mut m = Matrix::identity(4);
+        m.write_value(0, 0, x);
+        m.write_value(1, 1, y);
+        m.write_value(2, 2, z);
+        m
+    }
+
     pub fn write_value(&mut self, row: usize, col: usize, v: f64) {
         self.values[row * self.cols + col] = v;
     }
@@ -380,5 +388,53 @@ mod tests {
         let tm = Matrix::translation(5.0, -3.0, 2.0);
         let tv = tm * v;
         assert_eq!(tv, vc);
+    }
+
+    #[test]
+    fn scaling_points() {
+        let p = tuple::Tuple::point(-4.0, 6.0, 8.0);
+        let pc = p.clone();
+        let tm = Matrix::scaling(2.0, 3.0, 4.0);
+        let tmi = tm.inverse();
+        let tp = tm * p;
+        assert_eq!(tp, tuple::Tuple::point(-8.0, 18.0, 32.0));
+        let op = tmi * tp;
+        assert_eq!(op, pc); 
+    }
+
+    #[test]
+    fn scaling_vectors() {
+        let v = tuple::Tuple::vector(-4.0, 6.0, 8.0);
+        let vc = v.clone();
+        let tm = Matrix::scaling(2.0, 3.0, 4.0);
+        let tmi = tm.inverse();
+        let tv = tm * v;
+        assert_eq!(tv, tuple::Tuple::vector(-8.0, 18.0, 32.0));
+        let ov = tmi * tv;
+        assert_eq!(ov, vc); 
+    }
+
+    #[test]
+    fn reflecting_points() {
+        let p = tuple::Tuple::point(2.0, 3.0, 4.0);
+        let pc = p.clone();
+        let tm = Matrix::scaling(-1.0, 1.0, 1.0);
+        let tmi = tm.inverse();
+        let tp = tm * p;
+        assert_eq!(tp, tuple::Tuple::point(-2.0, 3.0, 4.0));
+        let op = tmi * tp;
+        assert_eq!(op, pc); 
+    }
+
+    #[test]
+    fn reflecting_vectors() {
+        let v = tuple::Tuple::vector(2.0, 3.0, 4.0);
+        let vc = v.clone();
+        let tm = Matrix::scaling(-1.0, 1.0, 1.0);
+        let tmi = tm.inverse();
+        let tv = tm * v;
+        assert_eq!(tv, tuple::Tuple::vector(-2.0, 3.0, 4.0));
+        let ov = tmi * tv;
+        assert_eq!(ov, vc); 
     }
 }
