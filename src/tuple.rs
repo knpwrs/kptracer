@@ -5,6 +5,10 @@ use super::util;
 pub struct Tuple (f64, f64, f64, f64);
 
 impl Tuple {
+    pub fn new(x: f64, y: f64, z: f64, w: f64) -> Tuple {
+        Tuple(x, y, z, w)
+    }
+
     pub fn point(x: f64, y: f64, z: f64) -> Tuple {
         Tuple(x, y, z, 1.0)
     }
@@ -20,6 +24,17 @@ impl Tuple {
     pub fn is_vector(&self) -> bool {
         let &Tuple(_, _, _, w) = self;
         util::approx_eq(w, 0.0)
+    }
+
+    pub fn get(&self, i: usize) -> f64 {
+      // gross
+      match i {
+          0 => self.0,
+          1 => self.1,
+          2 => self.2,
+          3 => self.3,
+          _ => panic!("Out of Tuple bounds!"),
+      }
     }
 
     pub fn magnitude(&self) -> f64 {
