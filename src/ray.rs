@@ -1,8 +1,9 @@
 use super::tuple::Tuple;
 
+#[derive(Clone, Copy)]
 pub struct Ray {
-    origin: Tuple,
-    direction: Tuple,
+    pub origin: Tuple,
+    pub direction: Tuple,
 }
 
 impl Ray {
@@ -11,9 +12,7 @@ impl Ray {
     }
 
     pub fn position(&self, t: f64) -> Tuple {
-        let origin = self.origin.clone();
-        let direction = self.direction.clone();
-        origin + (direction * t)
+        self.origin + (self.direction * t)
     }
 }
 
@@ -24,12 +23,10 @@ mod tests {
     #[test]
     pub fn create_ray() {
         let p = Tuple::point(2.0, 3.0, 4.0);
-        let pc = p.clone();
         let v = Tuple::vector(1.0, 0.0, 0.0);
-        let vc = v.clone();
         let r = Ray::new(p, v);
-        assert_eq!(r.origin, pc);
-        assert_eq!(r.direction, vc);
+        assert_eq!(r.origin, p);
+        assert_eq!(r.direction, v);
     }
 
     #[test]

@@ -1,7 +1,7 @@
 use std::ops;
 use super::util;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct Tuple (f64, f64, f64, f64);
 
 impl Tuple {
